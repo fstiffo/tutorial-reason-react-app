@@ -1,7 +1,5 @@
 external alert : string => unit = "alert" [@@bs.val];
 
-external log : string => unit = "console.log" [@@bs.val];
-
 type mark =
   | None
   | X

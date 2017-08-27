@@ -1,7 +1,5 @@
 [%bs.raw {|require('./game.css')|}];
 
-external log : string => unit = "console.log" [@@bs.val];
-
 open Square;
 
 type squares = array mark;
@@ -42,8 +40,7 @@ let component: ReasonReact.componentSpec state _ _ _ = ReasonReact.statefulCompo
 let make _children => {
   let handleClick i _event {ReasonReact.state: state} => {
     let history = Array.sub state.history 0 (state.stepNumber + 1);
-    Js.log (string_of_int @@ Array.length history);
-    let squares = history.(Array.length history - 1);
+    let squares = Array.copy @@ history.(Array.length history - 1);
     if (calculateWinner squares != None || squares.(i) != None) {
       ReasonReact.NoUpdate
     } else {
@@ -63,7 +60,6 @@ let make _children => {
     render: fun self => {
       let history = self.state.history;
       let current = history.(self.state.stepNumber);
-      Js.log self.state.stepNumber;
       let winner = calculateWinner current;
       let moves =
         Array.mapi
