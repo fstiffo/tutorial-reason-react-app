@@ -24,8 +24,7 @@ let calculateWinner squares => {
   let winningLine = {
     let winning =
       fun
-      | [a, b, c] =>
-        squares.(a) == squares.(b) && squares.(b) == squares.(c) && squares.(c) == squares.(a)
+      | [a, b, c] => squares.(a) == squares.(b) && squares.(b) == squares.(c)
       | _ => false;
     List.filter winning lines
   };
