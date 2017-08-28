@@ -1,8 +1,8 @@
 ####{BSB GENERATED: NO EDIT
 FLG -ppx '/usr/lib/node_modules/bs-platform/bin/reactjs_jsx_ppx_2.exe'
 FLG -ppx /usr/lib/node_modules/bs-platform/bin/bsppx.exe
-S /home/francesco/Reason/tutorial-reason-react-app/node_modules/bs-platform/lib/ocaml
-B /home/francesco/Reason/tutorial-reason-react-app/node_modules/bs-platform/lib/ocaml
+S /usr/lib/node_modules/bs-platform/lib/ocaml
+B /usr/lib/node_modules/bs-platform/lib/ocaml
 FLG -nostdlib -no-alias-deps -color always -w -40+6+7+27+32..39+44+45
 S /home/francesco/Reason/tutorial-reason-react-app/node_modules/reason-react/lib/ocaml
 B /home/francesco/Reason/tutorial-reason-react-app/node_modules/reason-react/lib/ocaml
