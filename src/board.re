@@ -4,7 +4,7 @@ let component = ReasonReact.statelessComponent "Board";
 
 let make ::owner ::squares ::handleClick _children => {
   let renderSquare owner i =>
-    <Square value=squares.(i) handleClick=(owner.ReasonReact.update (handleClick i)) />;
+    <Square value=squares.(i) handleClick=(owner.ReasonReact.reduce (handleClick i)) />;
   {
     ...component,
     render: fun _self =>

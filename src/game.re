@@ -2,6 +2,10 @@
 
 open Square;
 
+type action =
+  | HandleClick int
+  | JumpToStep int;
+
 type squares = array mark;
 
 type state = {
@@ -34,55 +38,58 @@ let calculateWinner squares => {
   }
 };
 
-let component: ReasonReact.componentSpec state _ _ _ = ReasonReact.statefulComponent "Game";
+let handleClick i _event => HandleClick i;
+
+let jumpToStep step _event => JumpToStep step;
+
+let component = ReasonReact.reducerComponent "Game";
 
 let make _children => {
-  let handleClick i _event {ReasonReact.state: state} => {
-    let history = Array.sub state.history 0 (state.stepNumber + 1);
-    let squares = Array.copy @@ history.(Array.length history - 1);
-    if (calculateWinner squares != None || squares.(i) != None) {
-      ReasonReact.NoUpdate
-    } else {
-      squares.(i) = state.xIsNext ? X : O;
-      ReasonReact.Update {
-        history: Array.append history [|squares|],
-        xIsNext: not state.xIsNext,
-        stepNumber: Array.length history
+  ...component,
+  initialState: fun () => {history: [|Array.make 9 None|], xIsNext: true, stepNumber: 0},
+  reducer: fun action state =>
+    switch action {
+    | HandleClick i =>
+      let history = Array.sub state.history 0 (state.stepNumber + 1);
+      let squares = Array.copy @@ history.(Array.length history - 1);
+      if (calculateWinner squares != None || squares.(i) != None) {
+        ReasonReact.NoUpdate
+      } else {
+        squares.(i) = state.xIsNext ? X : O;
+        ReasonReact.Update {
+          history: Array.append history [|squares|],
+          xIsNext: not state.xIsNext,
+          stepNumber: Array.length history
+        }
       }
-    }
-  };
-  let jumpToStep step _event {ReasonReact.state: state} =>
-    ReasonReact.Update {...state, stepNumber: step, xIsNext: step mod 2 == 0};
-  {
-    ...component,
-    initialState: fun () => {history: [|Array.make 9 None|], xIsNext: true, stepNumber: 0},
-    render: fun self => {
-      let history = self.state.history;
-      let current = history.(self.state.stepNumber);
-      let winner = calculateWinner current;
-      let moves =
-        Array.mapi
-          (
-            fun move _step => {
-              let desc = move > 0 ? "Move #" ^ string_of_int move : "Game start";
-              <li key=(string_of_int move)>
-                <a href="#" onClick=(self.ReasonReact.update (jumpToStep move))>
-                  (ReasonReact.stringToElement desc)
-                </a>
-              </li>
-            }
-          )
-          history;
-      let status =
-        winner == None ?
-          "Next player: " ^ (self.state.xIsNext ? "X" : "O") : "Winner: " ^ string_of_mark winner;
-      <div className="game">
-        <div className="game-board"> <Board owner=self squares=current handleClick /> </div>
-        <div className="game-info">
-          <div> (status |> ReasonReact.stringToElement) </div>
-          <ol> (ReasonReact.arrayToElement moves) </ol>
-        </div>
+    | JumpToStep step => ReasonReact.Update {...state, stepNumber: step, xIsNext: step mod 2 == 0}
+    },
+  render: fun self => {
+    let history = self.state.history;
+    let current = history.(self.state.stepNumber);
+    let winner = calculateWinner current;
+    let moves =
+      Array.mapi
+        (
+          fun move _step => {
+            let desc = move > 0 ? "Move #" ^ string_of_int move : "Game start";
+            <li key=(string_of_int move)>
+              <a href="#" onClick=(self.ReasonReact.reduce (jumpToStep move))>
+                (ReasonReact.stringToElement desc)
+              </a>
+            </li>
+          }
+        )
+        history;
+    let status =
+      winner == None ?
+        "Next player: " ^ (self.state.xIsNext ? "X" : "O") : "Winner: " ^ string_of_mark winner;
+    <div className="game">
+      <div className="game-board"> <Board owner=self squares=current handleClick /> </div>
+      <div className="game-info">
+        <div> (status |> ReasonReact.stringToElement) </div>
+        <ol> (ReasonReact.arrayToElement moves) </ol>
       </div>
-    }
+    </div>
   }
 };
