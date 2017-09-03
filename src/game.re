@@ -33,7 +33,7 @@ let calculateWinner squares => {
     List.filter winning lines
   };
   switch winningLine {
-  | [[a, ..._rest]] => squares.(a)
+  | [[a, ..._], ..._] => squares.(a)
   | _ => None
   }
 };
